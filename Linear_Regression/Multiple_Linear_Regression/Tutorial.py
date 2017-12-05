@@ -13,8 +13,6 @@ import pandas as pd
 dataset = pd.read_csv('50_Startups.csv')
 
 
-
-
 X = dataset.iloc[:, :-1].values
 y = dataset.iloc[:, 4].values
 
@@ -34,4 +32,30 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.2, rando
 
 
 #Feature Scaling
+#Don't need to do this for some reason. But will do it anyway
+from sklearn.preprocessing import StandardScaler
+sc_X = StandardScaler()
+X_train = sc_X.fit_transform(X_train)
+X_test = sc_X.transform(X_test)
+
+
+#Fitting Multiple Linear Regression to the Training Set
+from sklearn.linear_model import LinearRegression
+regressor = LinearRegression()
+regressor.fit(X_train, y_train)
+
+#Predicting the Test set results
+y_pred = regressor.predict(X_test)
+
+
+#Building the optimal model using Backward Elimination
+import statsmodels.formula.api as sm
+X = np.append(arr=np.ones((len(X[:,1]),1), dtype=int), values=X, axis=1)
+X_opt = X[:, [0,4,5]]
+
+#OLS, ordinary least squares
+regressor_ols = sm.OLS(endog=y, exog=X_opt).fit()
+regressor_ols.summary()
+
+
 
